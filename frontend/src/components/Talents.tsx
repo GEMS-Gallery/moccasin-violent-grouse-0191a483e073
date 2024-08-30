@@ -1,48 +1,102 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Paper, Grid } from '@mui/material';
+import { Typography, Paper, Grid, Tabs, Tab, Box } from '@mui/material';
 import { backend } from 'declarations/backend';
 
 interface Talent {
   name: string;
-  description: string | null;
+  description: string;
   icon: string;
   tier: number;
   column: number;
+  points: number;
+  maxPoints: number;
+}
+
+interface Rune {
+  name: string;
+  description: string;
+  icon: string;
+  slot: string;
+}
+
+interface TalentBuild {
+  name: string;
+  description: string;
+  talents: Talent[];
+  runes: Rune[];
 }
 
 const Talents: React.FC = () => {
-  const [talents, setTalents] = useState<Talent[]>([]);
+  const [talentBuilds, setTalentBuilds] = useState<TalentBuild[]>([]);
+  const [selectedBuild, setSelectedBuild] = useState(0);
 
   useEffect(() => {
-    const fetchTalents = async () => {
+    const fetchTalentBuilds = async () => {
       try {
-        const result = await backend.getTalentTree();
-        setTalents(result);
+        const result = await backend.getTalentBuilds();
+        setTalentBuilds(result);
       } catch (error) {
-        console.error('Error fetching talents:', error);
+        console.error('Error fetching talent builds:', error);
       }
     };
 
-    fetchTalents();
+    fetchTalentBuilds();
   }, []);
+
+  const handleBuildChange = (event: React.SyntheticEvent, newValue: number) => {
+    setSelectedBuild(newValue);
+  };
 
   return (
     <Paper className="p-4">
       <Typography variant="h4" component="h2" gutterBottom>
-        Talent Tree
+        Talents and Runes
       </Typography>
-      <Grid container spacing={2}>
-        {talents.map((talent, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Paper className="p-2">
-              <Typography variant="h6">{talent.name}</Typography>
-              <img src={talent.icon} alt={talent.name} className="w-12 h-12" />
-              <Typography variant="body2">{talent.description}</Typography>
-              <Typography variant="caption">Tier: {talent.tier}, Column: {talent.column}</Typography>
-            </Paper>
-          </Grid>
+      
+      <Tabs value={selectedBuild} onChange={handleBuildChange} aria-label="talent builds">
+        {talentBuilds.map((build, index) => (
+          <Tab label={build.name} key={index} />
         ))}
-      </Grid>
+      </Tabs>
+
+      {talentBuilds[selectedBuild] && (
+        <Box mt={2}>
+          <Typography variant="h6" gutterBottom>{talentBuilds[selectedBuild].name}</Typography>
+          <Typography variant="body2" paragraph>{talentBuilds[selectedBuild].description}</Typography>
+          
+          <Typography variant="h6" gutterBottom>Talents</Typography>
+          <Grid container spacing={2}>
+            {talentBuilds[selectedBuild].talents.map((talent, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Paper className="p-2 flex items-center">
+                  <img src={talent.icon} alt={talent.name} className="w-12 h-12 mr-2" />
+                  <div>
+                    <Typography variant="subtitle1">{talent.name}</Typography>
+                    <Typography variant="body2">{talent.description}</Typography>
+                    <Typography variant="caption">{talent.points}/{talent.maxPoints}</Typography>
+                  </div>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+
+          <Typography variant="h6" gutterBottom className="mt-4">Runes</Typography>
+          <Grid container spacing={2}>
+            {talentBuilds[selectedBuild].runes.map((rune, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Paper className="p-2 flex items-center">
+                  <img src={rune.icon} alt={rune.name} className="w-12 h-12 mr-2" />
+                  <div>
+                    <Typography variant="subtitle1">{rune.name}</Typography>
+                    <Typography variant="body2">{rune.description}</Typography>
+                    <Typography variant="caption">Slot: {rune.slot}</Typography>
+                  </div>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      )}
     </Paper>
   );
 };

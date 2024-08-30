@@ -14,7 +14,6 @@ export interface Rune {
   'name' : string,
   'slot' : string,
   'description' : string,
-  'effect' : [] | [string],
 }
 export interface Stat {
   'value' : bigint,
@@ -22,20 +21,26 @@ export interface Stat {
   'description' : [] | [string],
 }
 export interface Talent {
+  'maxPoints' : bigint,
   'icon' : string,
   'name' : string,
   'tier' : bigint,
-  'description' : [] | [string],
+  'description' : string,
   'column' : bigint,
+  'points' : bigint,
+}
+export interface TalentBuild {
+  'talents' : Array<Talent>,
+  'name' : string,
+  'description' : string,
+  'runes' : Array<Rune>,
 }
 export interface _SERVICE {
   'addGearItem' : ActorMethod<[GearItem], undefined>,
-  'addRune' : ActorMethod<[Rune], undefined>,
-  'addTalent' : ActorMethod<[Talent], undefined>,
+  'addTalentBuild' : ActorMethod<[TalentBuild], undefined>,
   'getGearRecommendations' : ActorMethod<[], Array<GearItem>>,
-  'getRunes' : ActorMethod<[], Array<Rune>>,
   'getStatPriority' : ActorMethod<[], Array<Stat>>,
-  'getTalentTree' : ActorMethod<[], Array<Talent>>,
+  'getTalentBuilds' : ActorMethod<[], Array<TalentBuild>>,
   'updateStatPriority' : ActorMethod<[Array<Stat>], undefined>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;

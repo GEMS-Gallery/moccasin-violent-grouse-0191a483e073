@@ -6,19 +6,26 @@ export const idlFactory = ({ IDL }) => {
     'stats' : IDL.Text,
     'enchant' : IDL.Opt(IDL.Text),
   });
+  const Talent = IDL.Record({
+    'maxPoints' : IDL.Nat,
+    'icon' : IDL.Text,
+    'name' : IDL.Text,
+    'tier' : IDL.Nat,
+    'description' : IDL.Text,
+    'column' : IDL.Nat,
+    'points' : IDL.Nat,
+  });
   const Rune = IDL.Record({
     'icon' : IDL.Text,
     'name' : IDL.Text,
     'slot' : IDL.Text,
     'description' : IDL.Text,
-    'effect' : IDL.Opt(IDL.Text),
   });
-  const Talent = IDL.Record({
-    'icon' : IDL.Text,
+  const TalentBuild = IDL.Record({
+    'talents' : IDL.Vec(Talent),
     'name' : IDL.Text,
-    'tier' : IDL.Nat,
-    'description' : IDL.Opt(IDL.Text),
-    'column' : IDL.Nat,
+    'description' : IDL.Text,
+    'runes' : IDL.Vec(Rune),
   });
   const Stat = IDL.Record({
     'value' : IDL.Nat,
@@ -27,12 +34,10 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     'addGearItem' : IDL.Func([GearItem], [], []),
-    'addRune' : IDL.Func([Rune], [], []),
-    'addTalent' : IDL.Func([Talent], [], []),
+    'addTalentBuild' : IDL.Func([TalentBuild], [], []),
     'getGearRecommendations' : IDL.Func([], [IDL.Vec(GearItem)], ['query']),
-    'getRunes' : IDL.Func([], [IDL.Vec(Rune)], ['query']),
     'getStatPriority' : IDL.Func([], [IDL.Vec(Stat)], ['query']),
-    'getTalentTree' : IDL.Func([], [IDL.Vec(Talent)], ['query']),
+    'getTalentBuilds' : IDL.Func([], [IDL.Vec(TalentBuild)], ['query']),
     'updateStatPriority' : IDL.Func([IDL.Vec(Stat)], [], []),
   });
 };

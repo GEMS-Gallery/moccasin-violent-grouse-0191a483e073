@@ -5,7 +5,6 @@ import { backend } from 'declarations/backend';
 
 const Home = React.lazy(() => import('./components/Home'));
 const Talents = React.lazy(() => import('./components/Talents'));
-const Runes = React.lazy(() => import('./components/Runes'));
 const Gear = React.lazy(() => import('./components/Gear'));
 const Stats = React.lazy(() => import('./components/Stats'));
 
@@ -17,8 +16,7 @@ function App() {
     const fetchData = async () => {
       try {
         await Promise.all([
-          backend.getTalentTree(),
-          backend.getRunes(),
+          backend.getTalentBuilds(),
           backend.getGearRecommendations(),
           backend.getStatPriority()
         ]);
@@ -50,8 +48,7 @@ function App() {
           </Typography>
           <nav className="flex flex-wrap">
             <Button component={Link} to="/" color="inherit" className="mx-4 my-2">Home</Button>
-            <Button component={Link} to="/talents" color="inherit" className="mx-4 my-2">Talents</Button>
-            <Button component={Link} to="/runes" color="inherit" className="mx-4 my-2">Runes</Button>
+            <Button component={Link} to="/talents" color="inherit" className="mx-4 my-2">Talents & Runes</Button>
             <Button component={Link} to="/gear" color="inherit" className="mx-4 my-2">Gear</Button>
             <Button component={Link} to="/stats" color="inherit" className="mx-4 my-2">Stats</Button>
           </nav>
@@ -63,7 +60,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/talents" element={<Talents />} />
-            <Route path="/runes" element={<Runes />} />
             <Route path="/gear" element={<Gear />} />
             <Route path="/stats" element={<Stats />} />
           </Routes>

@@ -10,18 +10,26 @@ import Debug "mo:base/Debug";
 actor {
   type Talent = {
     name: Text;
-    description: ?Text;
+    description: Text;
     icon: Text;
     tier: Nat;
     column: Nat;
+    points: Nat;
+    maxPoints: Nat;
   };
 
   type Rune = {
     name: Text;
     description: Text;
-    effect: ?Text;
     icon: Text;
     slot: Text;
+  };
+
+  type TalentBuild = {
+    name: Text;
+    description: Text;
+    talents: [Talent];
+    runes: [Rune];
   };
 
   type GearItem = {
@@ -38,15 +46,31 @@ actor {
     description: ?Text;
   };
 
-  stable var talentTree: [Talent] = [
-    { name = "Earth Shock"; description = ?"Instantly shocks the target with earthen energy"; icon = "earth_shock.png"; tier = 1; column = 2 },
-    { name = "Lightning Bolt"; description = ?"Hurls a bolt of lightning at the target"; icon = "lightning_bolt.png"; tier = 1; column = 3 },
-    { name = "Elemental Mastery"; description = ?"Reduces the mana cost of your shock spells"; icon = "elemental_mastery.png"; tier = 3; column = 2 }
-  ];
-
-  stable var runes: [Rune] = [
-    { name = "Rune of Thunderstorm"; description = "Enhances your Lightning Bolt"; effect = ?"Increases Lightning Bolt damage by 10%"; icon = "rune_thunderstorm.png"; slot = "Chest" },
-    { name = "Rune of Seismic Activity"; description = "Empowers your Earth Shock"; effect = ?"Earth Shock has a chance to stun the target"; icon = "rune_seismic.png"; slot = "Legs" }
+  stable var talentBuilds: [TalentBuild] = [
+    {
+      name = "Standard Elemental";
+      description = "A balanced build for general PvE content";
+      talents = [
+        { name = "Convection"; description = "Reduces the mana cost of your Shock spells by 10%."; icon = "spell_nature_wispsplode.jpg"; tier = 1; column = 2; points = 2; maxPoints = 5 },
+        { name = "Concussion"; description = "Increases the damage done by your Lightning Bolt, Chain Lightning and Shock spells by 5%."; icon = "spell_fire_thorns.jpg"; tier = 1; column = 3; points = 5; maxPoints = 5 },
+        { name = "Call of Thunder"; description = "Increases the critical strike chance of your Lightning Bolt and Chain Lightning spells by 5%."; icon = "spell_nature_callstorm.jpg"; tier = 3; column = 3; points = 5; maxPoints = 5 }
+      ];
+      runes = [
+        { name = "Rune of Lashing Flames"; description = "Your Flame Shock damage over time effect now stacks up to 2 times on a single target."; icon = "rune_lashing_flames.jpg"; slot = "Legs" },
+        { name = "Rune of Elemental Force"; description = "Lightning Bolt has a 15% chance to make your next Chain Lightning instant cast and cost no mana."; icon = "rune_elemental_force.jpg"; slot = "Chest" }
+      ];
+    },
+    {
+      name = "AoE Focused";
+      description = "Optimized for multi-target encounters";
+      talents = [
+        { name = "Storm Reach"; description = "Increases the range of your Lightning Bolt and Chain Lightning spells by 5 yards."; icon = "spell_nature_stormreach.jpg"; tier = 4; column = 1; points = 2; maxPoints = 2 },
+        { name = "Elemental Fury"; description = "Increases the critical strike damage bonus of your Searing, Magma, and Fire Nova Totems and your Fire, Frost, and Nature spells by 100%."; icon = "spell_fire_volcano.jpg"; tier = 4; column = 4; points = 5; maxPoints = 5 }
+      ];
+      runes = [
+        { name = "Rune of Forked Lightning"; description = "Chain Lightning now bounces to 2 additional targets."; icon = "rune_forked_lightning.jpg"; slot = "Hands" }
+      ];
+    }
   ];
 
   stable var gearRecommendations: [GearItem] = [
@@ -62,12 +86,8 @@ actor {
     { name = "Spirit"; value = 5; description = ?"Increases your mana regeneration" }
   ];
 
-  public query func getTalentTree() : async [Talent] {
-    talentTree
-  };
-
-  public query func getRunes() : async [Rune] {
-    runes
+  public query func getTalentBuilds() : async [TalentBuild] {
+    talentBuilds
   };
 
   public query func getGearRecommendations() : async [GearItem] {
@@ -78,12 +98,8 @@ actor {
     statPriority
   };
 
-  public func addTalent(talent: Talent) : async () {
-    talentTree := Array.append(talentTree, [talent]);
-  };
-
-  public func addRune(rune: Rune) : async () {
-    runes := Array.append(runes, [rune]);
+  public func addTalentBuild(build: TalentBuild) : async () {
+    talentBuilds := Array.append(talentBuilds, [build]);
   };
 
   public func addGearItem(item: GearItem) : async () {
