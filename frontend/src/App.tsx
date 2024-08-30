@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Container, CircularProgress, Snackbar } from '@mui/material';
+import { AppBar, Toolbar, Typography, Container, CircularProgress, Snackbar, Button } from '@mui/material';
 import { backend } from 'declarations/backend';
 
 const Home = React.lazy(() => import('./components/Home'));
@@ -44,16 +44,16 @@ function App() {
   return (
     <div className="App">
       <AppBar position="static" className="bg-[#0070DE]">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Toolbar className="flex flex-wrap justify-between">
+          <Typography variant="h6" component="div" className="flex-grow">
             Elemental Shaman Guide - Season of Discovery
           </Typography>
-          <nav>
-            <Link to="/" className="text-white mx-2">Home</Link>
-            <Link to="/talents" className="text-white mx-2">Talents</Link>
-            <Link to="/runes" className="text-white mx-2">Runes</Link>
-            <Link to="/gear" className="text-white mx-2">Gear</Link>
-            <Link to="/stats" className="text-white mx-2">Stats</Link>
+          <nav className="flex flex-wrap">
+            <Button component={Link} to="/" color="inherit" className="mx-4 my-2">Home</Button>
+            <Button component={Link} to="/talents" color="inherit" className="mx-4 my-2">Talents</Button>
+            <Button component={Link} to="/runes" color="inherit" className="mx-4 my-2">Runes</Button>
+            <Button component={Link} to="/gear" color="inherit" className="mx-4 my-2">Gear</Button>
+            <Button component={Link} to="/stats" color="inherit" className="mx-4 my-2">Stats</Button>
           </nav>
         </Toolbar>
       </AppBar>
