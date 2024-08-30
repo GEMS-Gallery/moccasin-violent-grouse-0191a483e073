@@ -1,3 +1,40 @@
+type Talent = 
+ record {
+   column: nat;
+   description: opt text;
+   icon: text;
+   name: text;
+   tier: nat;
+ };
+type Stat = 
+ record {
+   description: opt text;
+   name: text;
+   value: nat;
+ };
+type Rune = 
+ record {
+   description: text;
+   effect: opt text;
+   icon: text;
+   name: text;
+   slot: text;
+ };
+type GearItem = 
+ record {
+   enchant: opt text;
+   name: text;
+   slot: text;
+   source: opt text;
+   stats: text;
+ };
 service : {
-  increment: () -> (nat);
+  addGearItem: (GearItem) -> ();
+  addRune: (Rune) -> ();
+  addTalent: (Talent) -> ();
+  getGearRecommendations: () -> (vec GearItem) query;
+  getRunes: () -> (vec Rune) query;
+  getStatPriority: () -> (vec Stat) query;
+  getTalentTree: () -> (vec Talent) query;
+  updateStatPriority: (vec Stat) -> ();
 }

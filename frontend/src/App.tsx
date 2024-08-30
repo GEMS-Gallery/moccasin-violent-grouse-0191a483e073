@@ -1,48 +1,82 @@
-import React, { useState } from 'react';
-import { Button, Typography, Container, CircularProgress } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Container, CircularProgress, Snackbar } from '@mui/material';
 import { backend } from 'declarations/backend';
 
+const Home = React.lazy(() => import('./components/Home'));
+const Talents = React.lazy(() => import('./components/Talents'));
+const Runes = React.lazy(() => import('./components/Runes'));
+const Gear = React.lazy(() => import('./components/Gear'));
+const Stats = React.lazy(() => import('./components/Stats'));
+
 function App() {
-  const [count, setCount] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const incrementCounter = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await backend.increment();
-      setCount(Number(result));
-    } catch (err) {
-      console.error('Error incrementing counter:', err);
-      setError('Failed to increment counter. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await Promise.all([
+          backend.getTalentTree(),
+          backend.getRunes(),
+          backend.getGearRecommendations(),
+          backend.getStatPriority()
+        ]);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to load data. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
-    <Container className="flex flex-col items-center justify-center min-h-screen">
-      <Typography variant="h4" component="h1" gutterBottom>
-        Simple Counter App
-      </Typography>
-      <Typography variant="h6" component="h2" gutterBottom>
-        Count: {count !== null ? count : 'N/A'}
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={incrementCounter}
-        disabled={loading}
-      >
-        {loading ? <CircularProgress size={24} /> : 'Increment'}
-      </Button>
-      {error && (
-        <Typography color="error" className="mt-4">
-          {error}
-        </Typography>
-      )}
-    </Container>
+    <div className="App">
+      <AppBar position="static" className="bg-[#0070DE]">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Elemental Shaman Guide - Season of Discovery
+          </Typography>
+          <nav>
+            <Link to="/" className="text-white mx-2">Home</Link>
+            <Link to="/talents" className="text-white mx-2">Talents</Link>
+            <Link to="/runes" className="text-white mx-2">Runes</Link>
+            <Link to="/gear" className="text-white mx-2">Gear</Link>
+            <Link to="/stats" className="text-white mx-2">Stats</Link>
+          </nav>
+        </Toolbar>
+      </AppBar>
+
+      <Container className="mt-4">
+        <React.Suspense fallback={<CircularProgress />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/talents" element={<Talents />} />
+            <Route path="/runes" element={<Runes />} />
+            <Route path="/gear" element={<Gear />} />
+            <Route path="/stats" element={<Stats />} />
+          </Routes>
+        </React.Suspense>
+      </Container>
+
+      <Snackbar
+        open={error !== null}
+        message={error}
+        autoHideDuration={6000}
+        onClose={() => setError(null)}
+      />
+    </div>
   );
 }
 
