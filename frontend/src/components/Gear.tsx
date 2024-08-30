@@ -12,19 +12,33 @@ interface GearItem {
 
 const Gear: React.FC = () => {
   const [gear, setGear] = useState<GearItem[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGear = async () => {
       try {
         const result = await backend.getGearRecommendations();
-        setGear(result);
+        if ('ok' in result) {
+          setGear(result.ok);
+        } else {
+          throw new Error(result.err);
+        }
       } catch (error) {
         console.error('Error fetching gear:', error);
+        setError('Failed to load gear recommendations. Please try again later.');
       }
     };
 
     fetchGear();
   }, []);
+
+  if (error) {
+    return (
+      <Paper className="p-4">
+        <Typography color="error">{error}</Typography>
+      </Paper>
+    );
+  }
 
   return (
     <Paper className="p-4">

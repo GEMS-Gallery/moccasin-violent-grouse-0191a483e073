@@ -1,46 +1,4 @@
-type TalentBuild = 
- record {
-   description: text;
-   name: text;
-   runes: vec Rune;
-   talents: vec Talent;
- };
-type Talent = 
- record {
-   column: nat;
-   description: text;
-   icon: text;
-   maxPoints: nat;
-   name: text;
-   points: nat;
-   tier: nat;
- };
-type Stat = 
- record {
-   description: opt text;
-   name: text;
-   value: nat;
- };
-type Rune = 
- record {
-   description: text;
-   icon: text;
-   name: text;
-   slot: text;
- };
-type GearItem = 
- record {
-   enchant: opt text;
-   name: text;
-   slot: text;
-   source: opt text;
-   stats: text;
- };
 service : {
-  addGearItem: (GearItem) -> ();
-  addTalentBuild: (TalentBuild) -> ();
-  getGearRecommendations: () -> (vec GearItem) query;
-  getStatPriority: () -> (vec Stat) query;
-  getTalentBuilds: () -> (vec TalentBuild) query;
-  updateStatPriority: (vec Stat) -> ();
+  greet: (text) -> (text);
+  healthCheck: () -> (text) query;
 }
